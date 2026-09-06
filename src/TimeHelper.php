@@ -3,6 +3,8 @@ declare(strict_types=1);
 
 namespace App;
 
+use DateTimeImmutable;
+
 /**
  * 時段字串處理，與前端 js/utils.js 的 isTimeOverlap 邏輯保持一致。
  * 時段格式為 "08:00-09:00"，也可能是自訂名稱（例如「第一節」）。
@@ -45,6 +47,16 @@ final class TimeHelper
 
     public static function isValidDate(string $date): bool
     {
-        return (bool) preg_match('/^\d{4}-\d{2}-\d{2}$/', $date) && strtotime($date) !== false;
+        if (!preg_match('/^\d{4}-\d{2}-\d{2}$/', $date)) {
+            return false;
+        }
+
+        $parsed = DateTimeImmutable::createFromFormat('!Y-m-d', $date);
+        $errors = DateTimeImmutable::getLastErrors();
+
+        // getLastErrors() returns false when parsing completed without warnings.
+        return $parsed !== false
+            && $parsed->format('Y-m-d') === $date
+            && ($errors === false || ($errors['warning_count'] === 0 && $errors['error_count'] === 0));
     }
 }

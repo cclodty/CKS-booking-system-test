@@ -63,6 +63,12 @@ final class BookingService
         if ($slots === []) {
             throw new RuntimeException('沒有選擇任何時段');
         }
+        $today = date('Y-m-d');
+        foreach ($slots as $slot) {
+            if ($slot['date'] < $today) {
+                throw new RuntimeException('不可預約已過去的日期');
+            }
+        }
 
         $dates = array_unique(array_column($slots, 'date'));
         $isRecurring = !empty($payload['isRecurring']) || count($dates) > 1;
