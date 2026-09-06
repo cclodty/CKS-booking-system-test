@@ -9,8 +9,9 @@ import { Booking } from './booking.js';
 import { MyBookings } from './my_bookings.js';
 import { Print } from './print.js';
 import { Admin } from './admin.js';
+import { Demo } from './demo.js';
 
-const modules = { Constants, State, Utils, API, Auth, Nav, Booking, MyBookings, Print, Admin };
+const modules = { Constants, State, Utils, API, Auth, Nav, Booking, MyBookings, Print, Admin, Demo };
 window.App = modules;
 // 相容舊版樣板中未加 App. 前綴的行內事件
 Object.assign(window, modules);

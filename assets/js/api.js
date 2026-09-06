@@ -2,6 +2,7 @@ import { State } from './state.js';
 import { Constants } from './constants.js';
 import { Utils } from './utils.js';
 import { Nav } from './nav.js';
+import { Demo } from './demo.js';
 
 export const API = {
   /**
@@ -9,6 +10,8 @@ export const API = {
    * 請求格式與原 Vercel 版本相同：POST { action, payload }
    */
   request: async (action, payload = {}) => {
+    if (Demo.enabled) return Demo.request(action, payload);
+
     let res;
     try {
       res = await fetch(Constants.API_BASE_URL, {
@@ -74,9 +77,29 @@ export const API = {
       State.systemUser = result.user || null;
       API.saveCache();
       Nav.renderActiveScreen();
+      if (Demo.enabled) API.showDemoBanner();
     } catch (error) {
       console.error('資料同步失敗:', error);
+      if (!Demo.enabled && Demo.allowFallback) {
+        // 預覽環境通常沒有 MySQL；後端不可用時仍顯示可操作的 Demo，
+        // 正式部署可用 ?live=1 保留原本的連線錯誤提示。
+        Demo.activate();
+        const result = await Demo.request('getData');
+        State.db = { ...State.db, ...result.data };
+        State.systemUser = null;
+        Nav.renderActiveScreen();
+        API.showDemoBanner(true);
+      }
     }
+  },
+
+  showDemoBanner: (isFallback = false) => {
+    const el = document.getElementById('demoBanner');
+    if (!el) return;
+    const reason = el.querySelector('[data-demo-reason]');
+    if (reason && isFallback) reason.textContent = '預覽環境未連接資料庫，已自動載入示範資料。';
+    el.classList.remove('hidden-view');
+    API.hideConnectionWarning();
   },
 
   /** 只快取公開資料，帳號與授權碼不寫入 localStorage */

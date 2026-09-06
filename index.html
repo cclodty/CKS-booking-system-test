@@ -52,6 +52,14 @@
 </header>
 
 <main class="max-w-7xl mx-auto px-4 py-6">
+  <div id="demoBanner" class="hidden-view bg-amber-50 border border-amber-200 text-amber-900 rounded-xl p-4 mb-5 no-print flex flex-col sm:flex-row sm:items-center gap-3">
+    <div class="flex-1">
+      <strong><i class="fa-solid fa-flask mr-1"></i> 示範模式</strong>
+      <span data-demo-reason class="text-sm ml-1">毋須資料庫；操作只儲存在這個瀏覽器。</span>
+      <span class="text-sm">管理員帳號為 <code class="font-bold">demo</code>，密碼可任意填寫。</span>
+    </div>
+    <button onclick="App.Demo.reset()" class="bg-amber-200 hover:bg-amber-300 px-3 py-2 rounded-lg text-sm font-bold whitespace-nowrap"><i class="fa-solid fa-rotate-right mr-1"></i> 重設示範資料</button>
+  </div>
   <div id="apiWarning" class="hidden-view bg-red-50 border border-red-200 rounded-xl p-4 mb-5 no-print"></div>
 
   <!-- ===================== 預約 ===================== -->
